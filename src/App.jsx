@@ -1,4 +1,3 @@
-import logo from './logo.svg'
 import './App.css'
 
 function Form({ formFn, submitButton }) {
@@ -30,9 +29,12 @@ function App() {
   function login(formData) {
     console.log('Login', formData)
   }
+
   function register(formData) {
     console.log('register', formData)
   }
+
+  function logout() {}
 
   return (
     <div className="App">
