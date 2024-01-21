@@ -38,7 +38,13 @@ function App() {
 
   return (
     <div className="App">
-      <div className="header">My App</div>
+      <div className="header">
+        <h1>Bindaas Tomal App</h1>
+        <p>Hello Tamal</p>
+        <button className="button" type="button">
+          Logout
+        </button>
+      </div>
       <main className="content">
         <h3>Login</h3>
         <Form formFn={login} submitButton="Login" />
