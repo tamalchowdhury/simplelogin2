@@ -3,7 +3,12 @@ import './App.css'
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -50,7 +55,21 @@ function App() {
   const [loadingState, setLoadingState] = React.useState('idle') // idle, loading, success, error
   const [error, setError] = React.useState(null)
 
+  function handleLoginState(userData) {
+    setUser(userData.user)
+    setIsLoggedIn(true)
+    setLoadingState('success')
+  }
+
   function login(formData) {
+    const { email, password } = formData
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userData) => handleLoginState(userData))
+      .catch((err) => {
+        setError(err)
+      })
+
     console.log('Login', formData)
   }
 
@@ -58,10 +77,7 @@ function App() {
     const { email, password } = formData
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userData) => {
-        setUser(userData.user)
-        setIsLoggedIn(true)
-      })
+      .then((userData) => handleLoginState(userData))
       .catch((err) => {
         setError(err)
       })
@@ -69,7 +85,12 @@ function App() {
     console.log('register', formData)
   }
 
-  function logout() {}
+  function logout() {
+    signOut(auth).then(() => {
+      setIsLoggedIn(false)
+      setUser(null)
+    })
+  }
 
   function UnAuthenticatedApp() {
     return (
@@ -82,7 +103,25 @@ function App() {
     )
   }
 
-  function AuthenticatedApp() {}
+  function AuthenticatedApp() {
+    return (
+      <>
+        <h2>Hello {user?.email}!</h2>
+        <p>This is your dashboard</p>
+      </>
+    )
+  }
+
+  function AuthenticatedHeader() {
+    return (
+      <>
+        <p>Hello {user?.email}</p>
+        <button className="button" type="button" onClick={logout}>
+          Logout
+        </button>
+      </>
+    )
+  }
 
   return (
     <div className="App">
@@ -94,17 +133,6 @@ function App() {
         {isLoggedIn ? <AuthenticatedApp /> : <UnAuthenticatedApp />}
       </main>
     </div>
-  )
-}
-
-function AuthenticatedHeader() {
-  return (
-    <>
-      <p>Hello Tamal</p>
-      <button className="button" type="button">
-        Logout
-      </button>
-    </>
   )
 }
 
