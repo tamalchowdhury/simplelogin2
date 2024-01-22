@@ -1,3 +1,4 @@
+import React from 'react'
 import './App.css'
 
 function Form({ formFn, submitButton }) {
@@ -26,6 +27,8 @@ function Form({ formFn, submitButton }) {
 }
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+
   function login(formData) {
     console.log('Login', formData)
   }
@@ -36,22 +39,40 @@ function App() {
 
   function logout() {}
 
-  return (
-    <div className="App">
-      <div className="header">
-        <h1>Bindaas Tomal App</h1>
-        <p>Hello Tamal</p>
-        <button className="button" type="button">
-          Logout
-        </button>
-      </div>
-      <main className="content">
+  function UnAuthenticatedApp() {
+    return (
+      <>
         <h3>Login</h3>
         <Form formFn={login} submitButton="Login" />
         <h3>Register</h3>
         <Form formFn={register} submitButton="Register" />
+      </>
+    )
+  }
+
+  function AuthenticatedApp() {}
+
+  return (
+    <div className="App">
+      <div className="header">
+        <h1>Simple App</h1>
+        {isLoggedIn ? <AuthenticatedHeader /> : null}
+      </div>
+      <main className="content">
+        {isLoggedIn ? <AuthenticatedApp /> : <UnAuthenticatedApp />}
       </main>
     </div>
+  )
+}
+
+function AuthenticatedHeader() {
+  return (
+    <>
+      <p>Hello Tamal</p>
+      <button className="button" type="button">
+        Logout
+      </button>
+    </>
   )
 }
 
