@@ -1,6 +1,24 @@
 import React from 'react'
 import './App.css'
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from 'firebase/app'
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyAe5hM_oNjeizF2ESBGTtl8bWtzUvCCatE',
+  authDomain: 'simple-login-4ebae.firebaseapp.com',
+  projectId: 'simple-login-4ebae',
+  storageBucket: 'simple-login-4ebae.appspot.com',
+  messagingSenderId: '746918235872',
+  appId: '1:746918235872:web:24410233850db1aa164a85',
+}
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+
 function Form({ formFn, submitButton }) {
   function handleFormSubmit(event) {
     event.preventDefault()
@@ -28,12 +46,26 @@ function Form({ formFn, submitButton }) {
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+  const [user, setUser] = React.useState(null)
+  const [loadingState, setLoadingState] = React.useState('idle') // idle, loading, success, error
+  const [error, setError] = React.useState(null)
 
   function login(formData) {
     console.log('Login', formData)
   }
 
   function register(formData) {
+    const { email, password } = formData
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userData) => {
+        setUser(userData.user)
+        setIsLoggedIn(true)
+      })
+      .catch((err) => {
+        setError(err)
+      })
+
     console.log('register', formData)
   }
 
