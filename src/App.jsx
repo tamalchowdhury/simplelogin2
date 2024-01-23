@@ -54,10 +54,19 @@ function App() {
   const [user, setUser] = React.useState(null)
   const [loadingState, setLoadingState] = React.useState('idle') // idle, loading, success, error
   const [error, setError] = React.useState(null)
+  const [token, setToken] = React.useState(
+    undefined || localStorage.getItem('token')
+  )
+
+  React.useEffect(() => {
+    if (!token) return
+  }, [])
 
   function handleLoginState(userData) {
     setUser(userData.user)
     setIsLoggedIn(true)
+    setToken(userData.user.accessToken)
+    localStorage.setItem('token', userData.user.accessToken)
     setLoadingState('success')
   }
 
