@@ -37,15 +37,25 @@ function Form({ formFn, submitButton }) {
   }
 
   return (
-    <form onSubmit={handleFormSubmit}>
-      <div>
-        <input type="email" id="email" />
-      </div>
-      <div>
-        <input type="password" id="password" />
-      </div>
-      <button type="submit">{submitButton}</button>
-    </form>
+    <div className="form">
+      <h3>{submitButton}</h3>
+      <form onSubmit={handleFormSubmit}>
+        <div>
+          <input type="email" id="email" />
+        </div>
+        <div>
+          <input type="password" id="password" />
+        </div>
+        {submitButton === 'Login' ? (
+          <div className="forgot-byline">
+            <a href="#">Forgot Password?</a>
+          </div>
+        ) : null}
+        <div>
+          <button type="submit">{submitButton}</button>
+        </div>
+      </form>
+    </div>
   )
 }
 
@@ -78,8 +88,6 @@ function App() {
       .catch((err) => {
         setError(err)
       })
-
-    console.log('Login', formData)
   }
 
   function register(formData) {
@@ -90,8 +98,6 @@ function App() {
       .catch((err) => {
         setError(err)
       })
-
-    console.log('register', formData)
   }
 
   function logout() {
@@ -104,9 +110,7 @@ function App() {
   function UnAuthenticatedApp() {
     return (
       <>
-        <h3>Login</h3>
         <Form formFn={login} submitButton="Login" />
-        <h3>Register</h3>
         <Form formFn={register} submitButton="Register" />
       </>
     )
