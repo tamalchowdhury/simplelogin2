@@ -4,8 +4,11 @@ import './App.css'
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import {
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   getAuth,
+  onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
@@ -23,6 +26,8 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
+
+setPersistence(auth, browserLocalPersistence)
 
 function Form({ formFn, submitButton }) {
   function handleFormSubmit(event) {
@@ -64,19 +69,18 @@ function App() {
   const [user, setUser] = React.useState(null)
   const [loadingState, setLoadingState] = React.useState('idle') // idle, loading, success, error
   const [error, setError] = React.useState(null)
-  const [token, setToken] = React.useState(
-    undefined || localStorage.getItem('token')
-  )
 
   React.useEffect(() => {
-    if (!token) return
-  }, [])
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        handleLoginState({ user })
+      }
+    })
+  }, [user, isLoggedIn])
 
   function handleLoginState(userData) {
     setUser(userData.user)
     setIsLoggedIn(true)
-    setToken(userData.user.accessToken)
-    localStorage.setItem('token', userData.user.accessToken)
     setLoadingState('success')
   }
 
@@ -104,6 +108,7 @@ function App() {
     signOut(auth).then(() => {
       setIsLoggedIn(false)
       setUser(null)
+      localStorage.removeItem('token')
     })
   }
 
