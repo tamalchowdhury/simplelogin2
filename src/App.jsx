@@ -4,12 +4,14 @@ import './App.css'
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import {
+  GoogleAuthProvider,
   browserLocalPersistence,
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
   setPersistence,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth'
 
@@ -26,6 +28,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
+const provider = new GoogleAuthProvider()
 
 setPersistence(auth, browserLocalPersistence)
 
@@ -60,6 +63,16 @@ function Form({ formFn, submitButton }) {
           <button type="submit">{submitButton}</button>
         </div>
       </form>
+    </div>
+  )
+}
+
+function GoogleButton({ authHandler }) {
+  return (
+    <div>
+      <button onClick={authHandler} className="google-button">
+        Login or Register with Google
+      </button>
     </div>
   )
 }
@@ -112,11 +125,26 @@ function App() {
     })
   }
 
+  function googleLogin() {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result)
+        const token = credential.accessToken
+
+        console.log('credential', credential)
+        console.log('google token', token)
+        const { user } = result
+        handleLoginState({ user })
+      })
+      .catch((err) => console.log('error with google login', err))
+  }
+
   function UnAuthenticatedApp() {
     return (
       <>
         <Form formFn={login} submitButton="Login" />
         <Form formFn={register} submitButton="Register" />
+        <GoogleButton authHandler={googleLogin} />
       </>
     )
   }
