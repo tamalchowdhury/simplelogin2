@@ -70,7 +70,7 @@ function Form({ formFn, submitButton }) {
 function GoogleButton({ authHandler }) {
   return (
     <div>
-      <button onClick={authHandler} className="google-button">
+      <button onClick={authHandler} className="button google-button">
         Login or Register with Google
       </button>
     </div>
