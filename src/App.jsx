@@ -4,6 +4,7 @@ import './App.css'
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import {
+  FacebookAuthProvider,
   GoogleAuthProvider,
   browserLocalPersistence,
   createUserWithEmailAndPassword,
@@ -29,6 +30,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const provider = new GoogleAuthProvider()
+const fbProvider = new FacebookAuthProvider()
 
 setPersistence(auth, browserLocalPersistence)
 
@@ -72,6 +74,16 @@ function GoogleButton({ authHandler }) {
     <div>
       <button onClick={authHandler} className="button google-button">
         Login or Register with Google
+      </button>
+    </div>
+  )
+}
+
+function FacebookButton({ authHandler }) {
+  return (
+    <div>
+      <button onClick={authHandler} className="button facebook-button">
+        Login or Register with Facebook
       </button>
     </div>
   )
@@ -131,12 +143,24 @@ function App() {
         const credential = GoogleAuthProvider.credentialFromResult(result)
         const token = credential.accessToken
 
-        console.log('credential', credential)
-        console.log('google token', token)
         const { user } = result
         handleLoginState({ user })
       })
       .catch((err) => console.log('error with google login', err))
+  }
+
+  function facebookLogin() {
+    signInWithPopup(auth, fbProvider)
+      .then((result) => {
+        const credential = FacebookAuthProvider.credentialFromResult(result)
+        const token = credential.accessToken
+
+        console.log('result', result)
+
+        const { user } = result
+        handleLoginState({ user })
+      })
+      .catch((err) => console.log('error with facebook login', err))
   }
 
   function UnAuthenticatedApp() {
@@ -145,6 +169,7 @@ function App() {
         <Form formFn={login} submitButton="Login" />
         <Form formFn={register} submitButton="Register" />
         <GoogleButton authHandler={googleLogin} />
+        <FacebookButton authHandler={facebookLogin} />
       </>
     )
   }
